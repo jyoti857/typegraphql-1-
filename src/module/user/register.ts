@@ -1,27 +1,19 @@
-import { Arg, FieldResolver, Mutation, Query, Resolver, Root } from "type-graphql";
+import { Arg, Mutation, Query, Resolver } from "type-graphql";
 import {hash} from 'bcryptjs';
 import { User } from "../../entities/User";
 import { getMongoManager } from "typeorm";
+import { RegisterInput } from "../types/RegisterInput";
 
-@Resolver(User)
+@Resolver()
 export class RegisterResolver{
   @Query(() => String )
   async hello(){
     return 'hell'
   }
 
-  @FieldResolver()
-  async name(@Root() parent: User){
-    return `${parent.firstName} ${parent.lastName}`
-  }
-
   @Mutation(() => User)
-  // @Field()
   async register(
-    @Arg("firstName") firstName: string,
-    @Arg("lastName") lastName: string,
-    @Arg("email") email: string,
-    @Arg("password") password: string 
+    @Arg("data") {firstName, lastName, email, password}: RegisterInput
   ): Promise<User>{
     const hashedPassword = await hash(password, 12);
     const user =  new User();

@@ -1,4 +1,5 @@
-import { Field, ID, ObjectType } from "type-graphql";
+import { IsEmailAlreadyExist } from "../module/validator";
+import { Field, ID, ObjectType, Root } from "type-graphql";
 import { BaseEntity, Column, Entity, ObjectID, ObjectIdColumn } from "typeorm";
 
 @ObjectType()
@@ -17,12 +18,15 @@ export class User extends BaseEntity{
   @Column()
   lastName: string;
 
+  @IsEmailAlreadyExist({message: 'email is already in use'})
   @Field()
   @Column('text', {unique: true})
   email: string;
 
   @Field()
-  name: string;
+  name(@Root() parent: User): string{
+    return `${parent.firstName} ${parent.lastName}`
+  }
 
   @Column()
   password: string;
