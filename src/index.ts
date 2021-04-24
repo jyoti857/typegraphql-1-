@@ -1,28 +1,21 @@
 import "reflect-metadata";
 import { ApolloServer } from "apollo-server-express";
-import { buildSchema, Query, Resolver } from "type-graphql"
+import { buildSchema } from "type-graphql"
 import * as Express from 'express';
 import { createConnection } from "typeorm";
+import { RegisterResolver } from "./module/user/register";
 
-@Resolver()
-class FashionResolver{
-  @Query(() => String, {name: "helloFashion", nullable: true, defaultValue: 'jest and singh'} )
-  async hello(){
-    return '23';
-   }
-}
+
 
 const main = async () => {
 
-  // creating a connection and this simply reads the data from ormconfig.json
-  // file to make a connection 
-  await createConnection()
-  
   const schema = await buildSchema({
-    resolvers: [FashionResolver],
-    // here provide all the types that are missing in schema
-    // orphanedTypes: [FirstObject],
+    resolvers: [RegisterResolver],  
   });
+
+  await createConnection();
+  // const manager = getMongoManager();
+  // manager.save(user)
   const  apolloServer = new ApolloServer({schema});
   const app = Express();
   apolloServer.applyMiddleware({ app }); 
@@ -30,4 +23,4 @@ const main = async () => {
 
 }
 
-main();
+main().catch(err => console.log(err)); 
