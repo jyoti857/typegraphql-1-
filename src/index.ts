@@ -11,14 +11,13 @@ import cors from 'cors';
 import { LoginResolver } from "./module/user/login";
 import { UserByIdResolver } from "./module/user/UserById";
 import MongoDBStore from 'connect-mongodb-session';
-
+import { confirmUserResolver } from "./module/user/confirmUser";
 
 const main = async () => {
 
   
-  
   const schema = await buildSchema({
-    resolvers: [RegisterResolver, LoginResolver, UserByIdResolver],  
+    resolvers: [RegisterResolver, LoginResolver, UserByIdResolver, confirmUserResolver],  
     authChecker: ({ context : {req}}) => {
       return !!req.session.user;
     }
@@ -58,7 +57,9 @@ const main = async () => {
     },
   }))
   apolloServer.applyMiddleware({ app }); 
-  app.listen(4000, () => console.log("app is listening at port 4000!!"));
+  app.listen(4000, () => {
+    console.log("app is listening at port 4000!!");
+  });
 }
 
 main().catch(err => console.log(err)); 

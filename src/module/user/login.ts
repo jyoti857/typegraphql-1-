@@ -25,6 +25,8 @@ export class LoginResolver{
     const valid = await bcrypt.compare(password, user.password);
     if(!valid) return null;
     
+    if(!user.isConfirmed) return null;
+    
     context.req.session.user = user;
 
     return user;  
