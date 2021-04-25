@@ -13,11 +13,15 @@ import { UserByIdResolver } from "./module/user/UserById";
 import MongoDBStore from 'connect-mongodb-session';
 
 
-
 const main = async () => {
+
+  
   
   const schema = await buildSchema({
     resolvers: [RegisterResolver, LoginResolver, UserByIdResolver],  
+    authChecker: ({ context : {req}}) => {
+      return !!req.session.user;
+    }
   });
   
   await createConnection();

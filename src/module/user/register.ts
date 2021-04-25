@@ -1,16 +1,21 @@
-import { Arg, Mutation, Query, Resolver } from "type-graphql";
+import { Arg, Mutation, Query, Resolver, UseMiddleware } from "type-graphql";
 import {hash} from 'bcryptjs';
 import { User } from "../../entities/User";
 import { getMongoManager } from "typeorm";
 import { RegisterInput } from "../types/RegisterInput";
+import { isAuth } from "../../../src/middleware/isAuth";
+import { logger } from "../../../src/middleware/logger";
 
 @Resolver()
 export class RegisterResolver{
+  // @Authorized()
+  @UseMiddleware(isAuth, logger)
   @Query(() => String )
   async hello(){
     return 'hell'
   }
 
+  @UseMiddleware(logger)
   @Mutation(() => User)
   async register(
     @Arg("data") {firstName, lastName, email, password}: RegisterInput
