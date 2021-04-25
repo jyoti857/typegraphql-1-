@@ -1,24 +1,25 @@
 import { User } from "../../entities/User";
-import { UserContext } from "../../type/LoginContext";
+import { LoginContext } from "../../type/LoginContext";
 import { Ctx, Query, Resolver } from "type-graphql";
-import { getMongoManager } from "typeorm";
-
+// import mongoose from "mongoose";
+declare module 'express-session' {
+  export interface SessionData {
+    user: { [key: string]: any };
+  }
+}
 
 @Resolver()
 export class UserByIdResolver{
 
   @Query(() => User, {nullable: true})
-  async userById(@Ctx() ctx: UserContext): Promise<User | undefined>{
+  async userById(@Ctx() ctx: LoginContext): Promise<User | undefined>{
     
-    const id = ctx.req.sessionID;
-    console.log(ctx.req.sessionID)
-    if(!id){
+    const session_user = ctx.req.session.user;
+    if(!session_user){
       return ;
     }
-    // console.log('id--> ', id,  User.findOne(id), User.count());
-    const manager =  getMongoManager();
-    const user = await manager.findOne(User, {id})
-    // return await User.findOne({where: {email: ctx.req.body}}); 
+
+    const user = await User.findOne({email: session_user.email})
     return user;
   }
 }

@@ -5,11 +5,14 @@ import Express from 'express';
 import { createConnection } from "typeorm";
 import { RegisterResolver } from "./module/user/register";
 import session from "express-session";
-import connectRedis from 'connect-redis';
+// import connectRedis from 'connect-redis';
 import cors from 'cors';
-import { redis } from "./redis";
+// import { redis } from "./redis";
 import { LoginResolver } from "./module/user/login";
 import { UserByIdResolver } from "./module/user/UserById";
+import MongoDBStore from 'connect-mongodb-session';
+
+
 
 const main = async () => {
   
@@ -23,7 +26,12 @@ const main = async () => {
     context: ({req}: any) => ({req})
   });
   const app = Express();
-  const RedisStore = connectRedis(session);
+  // const RedisStore = connectRedis(session);
+  const MongoStore = MongoDBStore(session);
+  const store = new MongoStore({
+    collection: 'sessions', 
+    uri: " mongodb://127.0.0.1:27017/graphql-1!"
+  })
   app.use(
     cors({
       credentials: true,
@@ -31,13 +39,14 @@ const main = async () => {
     })
   )
   app.use(session({
-    store: new RedisStore({
-      client: redis as any,
-    }),
+    // store: new RedisStore({
+    //   client: redis,
+    // }),
+    store,
     name: "qid",
     secret: "secret_key_can_be_anything",
-    resave: true,
-    saveUninitialized: true,
+    resave: false,
+    saveUninitialized: false,
     cookie: {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',

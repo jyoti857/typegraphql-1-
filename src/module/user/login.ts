@@ -3,6 +3,12 @@ import { Arg, Ctx, Mutation, Resolver } from "type-graphql";
 import bcrypt from 'bcryptjs';
 import { LoginContext } from "../../type/LoginContext";
 
+declare module 'express-session' {
+  export interface SessionData {
+    user: { [key: string]: any };
+  }
+}
+
 @Resolver()
 export class LoginResolver{
 
@@ -18,9 +24,8 @@ export class LoginResolver{
     
     const valid = await bcrypt.compare(password, user.password);
     if(!valid) return null;
-    console.log("user id from login ---> ", user);
-    context.req.sessionID = user.id.toString();
-    // console.log("user id 000< ", context.req.session.id)
+    
+    context.req.session.user = user;
 
     return user;  
   }

@@ -1,6 +1,7 @@
 import { IsEmailAlreadyExist } from "../module/validator";
 import { Field, ID, ObjectType, Root } from "type-graphql";
-import { BaseEntity, Column, Entity, ObjectID, ObjectIdColumn } from "typeorm";
+import { BaseEntity, Column, Entity, ObjectIdColumn } from "typeorm";
+import { ObjectID } from "mongodb";
 
 @ObjectType()
 @Entity()
