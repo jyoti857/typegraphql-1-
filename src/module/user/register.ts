@@ -29,8 +29,7 @@ export class RegisterResolver{
     user.email = email;
     user.password = hashedPassword;
     await getMongoManager().save(user);
-    const confirmEmail = await createConfirmationEmail(user.email)
-    await confirmedMail(user.email, confirmEmail);
+    await confirmedMail(user.email, await createConfirmationEmail(user.email));
     return user;
   }
 }

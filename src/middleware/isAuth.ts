@@ -1,4 +1,4 @@
-import { LoginContext } from "../../src/type/LoginContext";
+import { MainContext } from "../type/MainContext";
 import { MiddlewareFn } from "type-graphql";
 
 declare module 'express-session' {
@@ -7,7 +7,7 @@ declare module 'express-session' {
   }
 }
 
-export const isAuth: MiddlewareFn<LoginContext> = async ({context}, next) => {
+export const isAuth: MiddlewareFn<MainContext> = async ({context}, next) => {
 
   if(!context.req.session.user){
     throw new Error("not authenticated!!!");

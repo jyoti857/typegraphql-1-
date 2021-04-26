@@ -1,7 +1,7 @@
 import { User } from "../../entities/User";
 import { Arg, Ctx, Mutation, Resolver } from "type-graphql";
 import bcrypt from 'bcryptjs';
-import { LoginContext } from "../../type/LoginContext";
+import { MainContext } from "../../type/MainContext";
 
 declare module 'express-session' {
   export interface SessionData {
@@ -16,7 +16,7 @@ export class LoginResolver{
   async login(
     @Arg("email") email: string, 
     @Arg('password') password: string,
-    @Ctx() context: LoginContext
+    @Ctx() context: MainContext
   ): Promise<User | null>{
 
     const user = await User.findOne({where : {email}});
@@ -24,7 +24,7 @@ export class LoginResolver{
     
     const valid = await bcrypt.compare(password, user.password);
     if(!valid) return null;
-    
+    console.log("valid from login ---> ", user );
     if(!user.isConfirmed) return null;
     
     context.req.session.user = user;

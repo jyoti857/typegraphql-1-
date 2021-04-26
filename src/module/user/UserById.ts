@@ -1,5 +1,5 @@
 import { User } from "../../entities/User";
-import { LoginContext } from "../../type/LoginContext";
+import { MainContext } from "../../type/MainContext";
 import { Ctx, Query, Resolver } from "type-graphql";
 // import mongoose from "mongoose";
 declare module 'express-session' {
@@ -12,7 +12,7 @@ declare module 'express-session' {
 export class UserByIdResolver{
 
   @Query(() => User, {nullable: true})
-  async userById(@Ctx() ctx: LoginContext): Promise<User | undefined>{
+  async userById(@Ctx() ctx: MainContext): Promise<User | undefined>{
     
     const session_user = ctx.req.session.user;
     if(!session_user){

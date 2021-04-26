@@ -3,21 +3,22 @@ import { ApolloServer } from "apollo-server-express";
 import { buildSchema } from "type-graphql"
 import Express from 'express';
 import { createConnection } from "typeorm";
-import { RegisterResolver } from "./module/user/register";
+// import { RegisterResolver } from "./module/user/register";
 import session from "express-session";
 // import connectRedis from 'connect-redis';
 import cors from 'cors';
 // import { redis } from "./redis";
-import { LoginResolver } from "./module/user/login";
-import { UserByIdResolver } from "./module/user/UserById";
+// import { LoginResolver } from "./module/user/login";
+// import { UserByIdResolver } from "./module/user/UserById";
 import MongoDBStore from 'connect-mongodb-session';
-import { confirmUserResolver } from "./module/user/confirmUser";
+// import { confirmUserResolver } from "./module/user/confirmUser";
 
 const main = async () => {
 
   
   const schema = await buildSchema({
-    resolvers: [RegisterResolver, LoginResolver, UserByIdResolver, confirmUserResolver],  
+    resolvers: [__dirname+'/module/**/*.ts'],
+    // resolvers: [RegisterResolver, LoginResolver, UserByIdResolver, confirmUserResolver],  
     authChecker: ({ context : {req}}) => {
       return !!req.session.user;
     }
