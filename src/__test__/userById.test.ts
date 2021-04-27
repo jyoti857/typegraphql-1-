@@ -12,9 +12,9 @@ beforeAll(async() => {
 afterAll(async() => {
   await conn.close();
 })
-const RegisterMutation = `
-  mutation Register($data: RegisterInput!){
-    register(data: $data){
+const UserByIdMutation = `
+  {
+    userById{
       id
       firstName
       lastName
@@ -23,8 +23,8 @@ const RegisterMutation = `
     }
   }`
 
-describe("Register", () => {
-  it("create a user", async() => {
+describe("UserById", () => {
+  it("get a user by Id", async() => {
 
     const user = {
       firstName: faker.name.firstName(),
@@ -32,25 +32,38 @@ describe("Register", () => {
       email: faker.internet.email(),
       password: faker.internet.password()
     }
+
+    const newUser = await User.create(user).save();
+    console.log("new user ---> ", newUser);
+    const dbUser = await User.findOne({email: newUser.email});
+    console.log("db user from user by id ", dbUser);
+    
     const response = await gCall({
-      source: RegisterMutation,
-      variableValues: {
-        data: user
-      }
+      source: UserByIdMutation,
+      user: newUser
     })
+
+    console.log("response from user by id ----> ", response);
+
     expect(response).toMatchObject({
       data: {
-        register: {
+        userById: {
           firstName: user.firstName,
           lastName: user.lastName,
-          email: user.email
+          email: user.email,
         }
       }
     })
+  }, 10000);
+  it("return null", async() => {
+    const response = await gCall({
+      source: UserByIdMutation,
+    });
 
-    const dbUser = await User.findOne({email: user.email});
-    expect(dbUser).toBeDefined();
-    expect(dbUser?.isConfirmed).toBeFalsy();
-    expect(dbUser!.email).toBe(user.email);
-  }, 30000)
+    expect(response).toMatchObject({
+      data: {
+        userById: null
+      }
+    })
+  })
 })

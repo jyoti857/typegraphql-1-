@@ -4,9 +4,10 @@ import { buildSchema } from "type-graphql";
 
 export interface Options{
   source: string;
-  variableValues: Maybe<{
+  variableValues?: Maybe<{
     [key: string]: any;
-  }>
+  }>;
+  user?: any;
 }
 const createSchema = async() => await buildSchema({
   resolvers: [__dirname+'/../module/*/*.ts'],
@@ -18,7 +19,7 @@ const createSchema = async() => await buildSchema({
 // just for to stop call schema each time gCall is called for efficiency
 
 let schema: GraphQLSchema;
-export const gCall = async({source, variableValues}: Options) => {
+export const gCall = async({source, variableValues, user}: Options) => {
   if(!schema){
     schema = await createSchema()
   }
@@ -26,5 +27,15 @@ export const gCall = async({source, variableValues}: Options) => {
     schema,
     source,
     variableValues,
+    contextValue: {
+      req: {
+        session: {
+          user
+        }
+      },
+      res: {
+        clearCookies: jest.fn()
+      }
+    }
   })
 }
