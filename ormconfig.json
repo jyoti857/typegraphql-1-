@@ -6,6 +6,6 @@
   "useUnifiedTopology": true,
   "database": "graphql-1!",
   "entities": [
-    "src/entities/**/*.*"
+    "src/entities/**/!(*.test.ts)"
   ]
 }

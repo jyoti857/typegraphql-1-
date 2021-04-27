@@ -2,6 +2,7 @@ import { IsEmailAlreadyExist } from "../module/validator";
 import { Field, ID, ObjectType, Root } from "type-graphql";
 import { BaseEntity, Column, Entity, ObjectIdColumn } from "typeorm";
 import { ObjectID } from "mongodb";
+import { Min } from "class-validator";
 
 @ObjectType()
 @Entity()
@@ -29,6 +30,7 @@ export class User extends BaseEntity{
     return `${parent.firstName} ${parent.lastName}`
   }
 
+  @Min(5)
   @Column()
   password: string;
 
